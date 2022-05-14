@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="UpdateInterlockAndLimit" Id="{b5896d0d-c733-46d3-9929-2c20f26d787d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION UpdateInterlockAndLimit
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Resets the interlock to allow for 
+Process.InterlockAndLimit := 0;
+WriteToInterlockAndLimit(Inputs.DOORSENS1,0);
+WriteToInterlockAndLimit(Inputs.DOORSENS2,1);
+WriteToInterlockAndLimit(Inputs.DI_HOISTING_LIM_BOTTOM,2);
+WriteToInterlockAndLimit(Inputs.DI_HOISTING_LIM_TOP,3);
+WriteToInterlockAndLimit(Inputs.DI_STABLIZER_LIM_HOIST_SIDE,4);
+WriteToInterlockAndLimit(Inputs.DI_STABLIZER_LIM_OPPOSITE_HOIST,5);]]></ST>
+    </Implementation>
+    <LineIds Name="UpdateInterlockAndLimit">
+      <LineId Id="22" Count="6" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

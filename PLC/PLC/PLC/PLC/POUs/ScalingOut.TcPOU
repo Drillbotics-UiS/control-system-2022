@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ScalingOut" Id="{5d485be6-0ae8-49f7-9e70-8e9a4220cc67}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ScalingOut : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	HoistingScaling: INT := 300;
+	PumpScaling: INT := 100;
+	IntMax : INT := 32767;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Allows no motor movement when either door is open
+IF (Inputs.DOORSENS1 = FALSE OR Inputs.DOORSENS2 = FALSE) THEN
+	Outputs.AO_HOISTING := 0;
+	RETURN;
+END_IF
+
+// Prevent integer overflow which causes motor to run in reverse
+IF Process.HoistingDemandValue >= HoistingScaling THEN
+	Process.HoistingDemandValue := INT_TO_REAL(HoistingScaling);
+ELSIF Process.HoistingDemandValue <= (-1) * HoistingScaling THEN
+	Process.HoistingDemandValue:= INT_TO_REAL(HoistingScaling*(-1));
+END_IF
+
+//Prevent integer overflow and sub-zero values
+IF Process.PumpPID >= PumpScaling THEN
+	Process.PumpPID := REAL_TO_INT(PumpScaling);
+ELSIF Process.PumpPID <= 0 THEN
+	Process.PumpPID := 0;
+END_IF
+
+
+//Only downwards when top switch is pressed
+IF (Inputs.DI_HOISTING_LIM_TOP = FALSE) AND (Process.HoistingDemandValue > 0) THEN
+	Outputs.AO_HOISTING := 0;
+//Only upwards when bottom switch is pressed
+ELSIF (Inputs.DI_HOISTING_LIM_BOTTOM = FALSE) AND (Process.HoistingDemandValue < 0) THEN
+	Outputs.AO_HOISTING := 0;
+ELSE
+	Outputs.AO_HOISTING := REAL_TO_INT(Process.HoistingDemandValue/HoistingScaling*IntMax);
+END_IF
+
+Outputs.AO_ValveWaterIn := DINT_TO_INT(Process.PumpOpen*IntMax);
+
+Outputs.DO_PumpEnable := DINT_TO_BOOL(Process.PumpEnable);
+Outputs.AO_PUMP := REAL_TO_INT(Process.PumpPID/PumpScaling*IntMax);]]></ST>
+    </Implementation>
+    <LineIds Name="ScalingOut">
+      <LineId Id="35" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="53" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="61" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="28" Count="3" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

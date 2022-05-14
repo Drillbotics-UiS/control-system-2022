@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="IIRFilter" Id="{b7b3d10b-2037-4039-9c3c-7bae6cb0d870}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION IIRFilter : REAL
+VAR_INPUT
+	newValue : REAL;
+	filterStrength : REAL;
+END_VAR
+VAR_IN_OUT
+	value : REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[value := newValue*(1-filterStrength) + value*filterStrength;]]></ST>
+    </Implementation>
+    <LineIds Name="IIRFilter">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

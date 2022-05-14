@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="CAN_Receive" Id="{aeb3c2e1-15ab-4af4-9092-f5a8cf50f535}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION CAN_Receive : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	// CAN-BUS
+	arrCobId : ARRAY [0..45]OF UINT;
+	arrCobIdTmp : ARRAY [0..45]OF UINT;
+	MessageReceived: ARRAY [0..9] OF CANQUEUE;
+	test_number_1 : REAL;
+	test_number_2 : REAL;
+	test : CANQUEUE;
+	MsgId : UINT;
+	// Indexing vars
+	i: UINT;
+	j : UINT;
+
+	z: UINT;
+	n: INT;
+	z_old: UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Receiving, CAN-BUS *)
+IF Outputs.TxQueue.RxCounter <> Inputs.RxQueue.RxCounter THEN
+	FOR i := 0 TO (Inputs.RxQueue.NoOfRxMessages-1) DO
+		MessageReceived[i] := Inputs.RxQueue.RxMessages[i];
+	END_FOR
+	Outputs.TxQueue.RxCounter := Outputs.TxQueue.RxCounter+1;
+END_IF
+
+(*
+IF (Inputs.NoOfRxMessages = 0) THEN
+	RETURN;
+END_IF
+*)
+
+
+(*Parsing*)
+FOR z:=0 TO (Inputs.RxQueue.NoOfRxMessages) DO
+	 (*Logging last 45 received CobId's*)
+	IF z<>z_old AND n<45 THEN
+		arrCobId[n]:=MessageReceived[z].cobId;
+		IF n>=44 THEN n:=0;arrCobIdTmp:=arrCobId; ELSE n:=n+1; END_IF
+		z_old:=z;
+	END_IF
+	
+	//Removes the last five bits in number and shifts five places
+	MsgId := SHR(MessageReceived[z].cobId AND 16#FFE0, 5);
+
+	(*Case structure to catch specific CobId and parse data from it*)
+	CASE  MsgId OF		
+			
+		40: (* Engine Oil Pressure *)
+			test := MessageReceived[z];
+			
+		//ELSE // DEBUG
+		//	J1939_UNKNOWN_COBID	:=MessageReceived[z];
+		//	J1939_createVisString(rxData:=ADR(MessageReceived[z].rxData) , strRxData=>strJ1939_UNKNOWN_COBID );
+			// DISPLAY UNKNOW MESSAGES
+	//		ADSLOGSTR(msgCtrlMask:=ADSLOG_MSGTYPE_HINT , msgFmtStr:= 'J1939 uknown CobId: ' , strArg:=strJ1939_UNKNOWN_COBID );
+	
+		200:
+			ByteArrayToReal(MessageReceived[z],0, output => test_number_1);
+			ByteArrayToReal(MessageReceived[z],4, output => test_number_2);
+		
+		201:
+			ByteArrayToDINT(MessageReceived[z], 0, output => Process.PumpOpen);
+			
+		202:
+			ByteArrayToDINT(MessageReceived[z], 0, output => Process.HoistingEnable);
+			ByteArrayToReal(MessageReceived[z], 4, output => Process.HoistingDemandValue);
+			
+		203:
+			ByteArrayToDINT(MessageReceived[z], 0, output => Process.PumpEnable);
+			ByteArrayToReal(MessageReceived[z], 4, output => Process.PumpPID);
+			
+		206:
+			ByteArrayToReal(MessageReceived[z], 0, output => Process.InputTopDriveRPMSetPoint);
+			ByteArrayToReal(MessageReceived[z], 4, output => Process.InputTopDriveTorqueSetPoint);
+			
+		208:
+			ByteArrayToDINT(MessageReceived[z], 0, output => Process.TopDriveEnable);
+	END_CASE
+END_FOR]]></ST>
+    </Implementation>
+    <LineIds Name="CAN_Receive">
+      <LineId Id="8" Count="41" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="71" Count="2" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="80" Count="1" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="84" Count="1" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="88" Count="2" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

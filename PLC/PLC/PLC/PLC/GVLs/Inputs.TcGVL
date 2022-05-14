@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="Inputs" Id="{789f70f8-636f-4786-8bf4-900300e68ec2}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	// INTERLOCK
+	DOORSENS1 AT %I* : BOOL;
+	DOORSENS2 AT %I* : BOOL;
+	
+	// ANALOG IN
+	AI_PressureSensor AT %I* :UINT;
+	AI_RPM AT %I* : UINT;
+	AI_TORQUE AT %I* : UINT;
+	AI_Z1 AT %I* : REAL;
+	AI_Z2 AT %I* : REAL;
+	AI_Z3 AT %I* : REAL;
+	AI_TEMP AT %I* : UINT;
+	AI_HEIGHT AT %I* : UINT;
+	AI_WaterInPressure AT %I*: UINT;
+
+	
+	
+	// DIGITAL IN
+	DI_HOISTING_LIM_TOP AT %I*: BOOL;
+	DI_HOISTING_LIM_BOTTOM AT %I*: BOOL;
+	
+	DI_STABLIZER_LIM_HOIST_SIDE AT %I*: BOOL;
+	DI_STABLIZER_LIM_OPPOSITE_HOIST AT %I*: BOOL;
+	
+	// CAN-BUS
+	//TxCounter AT %I* : UINT;
+	//RxCounter AT %I* : UINT;
+	//NoOfRxMessages AT %I* : UINT;
+	//RxMessages AT %I* : ARRAY [0..99] OF CANQUEUE;
+	
+	RxQueue AT %I*: CANRXQUEUESTRUCT_N_100;
+	
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

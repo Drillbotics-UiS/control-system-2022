@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ScalingIn" Id="{a75abb54-6290-4759-8cf7-84d3613d9788}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ScalingIn : BOOL
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Process.currentHeight:= Inputs.AI_HEIGHT*(0.0263) + 79.878;
+IIRFilter(Process.currentHeight,0.99,Process.Height);
+//Process.Height := Inputs.AI_HEIGHT*(-0.00508825) + 49.10937731;
+
+// Circulation system pressure
+Process.Pressure := Inputs.AI_PressureSensor*0.003277 - 0.12124;
+
+// Circluation system temperature
+Process.Temperature := Inputs.AI_TEMP*0.003282 - 0.1083;]]></ST>
+    </Implementation>
+    <LineIds Name="ScalingIn">
+      <LineId Id="8" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="9" Count="4" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

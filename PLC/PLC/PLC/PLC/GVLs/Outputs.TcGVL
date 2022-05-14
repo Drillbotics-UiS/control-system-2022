@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="Outputs" Id="{8cf31da2-482b-4dea-b2ab-ce2ff8fbf8ce}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	
+	// ANALOG OUT
+	AO_RPM AT %Q* : INT;
+	AO_TORQUE AT %Q* : INT;
+	AO_HOISTING AT %Q* : INT;
+	AO_PUMP AT %Q* : INT;
+	AO_ValveWaterIn AT %Q* : INT;
+	
+	
+	DO_PumpEnable AT %Q*: BOOL;
+	// CAN
+	TxQueue AT %Q* : CANTXQUEUESTRUCT_N_100;
+	
+	bool1 AT %Q* : BOOL;
+	bool2 AT %Q* : BOOL;
+	bool3 AT %Q* : BOOL;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

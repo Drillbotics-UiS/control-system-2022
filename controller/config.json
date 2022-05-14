@@ -1,0 +1,15 @@
+{
+  "log_buffer_size": 100,
+  "logging_speed": 10,
+  "ams_address": "5.89.199.32.1.1",
+  "ams_port": 851,
+  "schema_file": "schema.sql",
+  "can_bus_type": "kvaser",
+  "can_channel_plc": 0,
+  "can_channel_dhs": 1,
+  "can_bitrate_plc": 1000000,
+  "can_bitrate_dhs": 500000,
+  "plot_background_color": "#333333",
+  "plot_style": "dark_background",
+  "program_theme": "dark"
+}

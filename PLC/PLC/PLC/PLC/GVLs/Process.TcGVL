@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="Process" Id="{5268dbb8-16ab-42fc-9813-401d63a2b612}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	// INPUTS
+	State : DINT := 0;
+	Pressure: REAL;
+	Temperature: REAL;
+	InterlockAndLimit: DINT := 127;
+	TopDriveRPM : REAL := 465.2;
+	TopDriveTorque : REAL := 34.4;
+	WOB_1 : REAL := 12.3;
+	WOB_2 : REAL := 12.3;
+	WOB_3 : REAL := 12.3;
+	WOB_AVG : REAL := (WOB_1 + WOB_2 + WOB_3)/3;
+	Height : REAL;
+	CurrentHeight : REAL;
+	
+	// OUTPUTS
+	TopDriveRPMSetPoint : REAL := 465.0;
+	TopDriveTorqueSetPoint : REAL := 34.0;
+	PumpSetPoint: REAL := 50.0;
+	HoistingSpeed: REAL;
+	//HoistingEnable: BOOL := FALSE;
+	
+	
+	// GUI inputs
+	HoistingEnable : DINT;
+	HoistingDemandValue: REAL;
+	
+	PumpEnable : DINT;
+	PumpOpen : DINT;
+	PumpPID: REAL;
+	
+	TopDriveEnable : DINT;
+	InputTopDriveRPMSetPoint : REAL;
+	InputTopDriveTorqueSetPoint : REAL;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

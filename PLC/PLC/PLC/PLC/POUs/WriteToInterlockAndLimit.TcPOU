@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="WriteToInterlockAndLimit" Id="{b71cc806-851f-4f23-b41c-ed85b3044ef0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION WriteToInterlockAndLimit
+VAR_INPUT
+	value: BOOL;
+	pos: DINT;
+END_VAR
+VAR
+	BoolNumber : UDINT;
+	result : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[BoolNumber := SHL(BOOL_TO_UDINT(value AND 1),pos);
+result := DINT_TO_UDINT(Process.InterlockAndLimit) OR BoolNumber;
+Process.InterlockAndLimit := UDINT_TO_DINT(result);]]></ST>
+    </Implementation>
+    <LineIds Name="WriteToInterlockAndLimit">
+      <LineId Id="16" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="20" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ByteArrayToDINT" Id="{d2e1d2ab-c0e9-4ea0-a2e8-05aff73ae93c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ByteArrayToDINT : DINT
+VAR_INPUT
+	msg : CANQUEUE;
+	pos : INT;
+END_VAR
+VAR_OUTPUT
+	output : DINT;
+END_VAR
+VAR
+	result : UDINT;
+	i: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FOR i := pos + 3 TO 0 BY -1 DO
+	// starts with the last number in the array and shifts it zero places
+	// the following numbers get shiftet left one more place than the last and added to the total.
+	result := result + (SHL(USINT_TO_UDINT(msg.data[i]), (3-i)* 8));
+END_FOR
+output := UDINT_TO_DINT(result);
+]]></ST>
+    </Implementation>
+    <LineIds Name="ByteArrayToDINT">
+      <LineId Id="20" Count="5" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

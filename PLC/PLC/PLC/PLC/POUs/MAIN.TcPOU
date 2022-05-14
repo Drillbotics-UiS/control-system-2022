@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="MAIN" Id="{7ca7df38-5cb0-4642-a7ae-f93b9224edab}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	startup : BOOL := TRUE;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CAN_Receive();
+ScalingIn();
+
+Outputs.bool1 := DINT_TO_BOOL(Process.HoistingEnable);
+Outputs.bool2 := DINT_TO_BOOL(Process.HoistingEnable);
+Outputs.bool3 := DINT_TO_BOOL(Process.HoistingEnable);
+
+CASE Process.State OF
+	0:
+		Process.HoistingDemandValue := 100;
+		IF NOT Inputs.DI_HOISTING_LIM_TOP THEN
+			Process.State := 1;
+			Process.HoistingDemandValue := 0;
+		END_IF
+	
+END_CASE
+
+UpdateInterlockAndLimit();
+ScalingOut();
+CAN_Send();]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="27" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="30" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

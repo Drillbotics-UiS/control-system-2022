@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="DINTToByteArray" Id="{75b0781d-ee54-4e1a-a944-c45c9108551d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION DINTToByteArray
+VAR_OUTPUT
+	msg : ARRAY[0..7] OF USINT;
+END_VAR
+VAR_INPUT
+	value1 : DINT;
+	value2 : DINT;
+END_VAR
+VAR
+	i : INT;
+	temp : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//converts two numbers to a byte-array and returns the array
+temp := DINT_TO_UDINT(value1);
+FOR i := 3 TO 0 BY -1 DO
+	msg[i] := UDINT_TO_USINT(temp MOD 256);
+	temp := temp / 256;
+END_FOR;
+
+
+temp := DINT_TO_UDINT(value2);
+FOR i := 7 TO 4 BY -1 DO
+	msg[i] := UDINT_TO_USINT(temp MOD 256);
+	temp := temp / 256;
+END_FOR;]]></ST>
+    </Implementation>
+    <LineIds Name="DINTToByteArray">
+      <LineId Id="32" Count="11" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ByteArrayToReal" Id="{06c82136-d46e-41ad-b331-c03f2b4069b7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ByteArrayToReal : REAL
+VAR_INPUT
+	msg : CANQUEUE;
+	pos : INT;
+END_VAR
+VAR_OUTPUT
+	output : REAL;
+END_VAR
+VAR
+	tmp: ARRAY[0..3] OF USINT;
+	pt : POINTER TO REAL;
+	i : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FOR i := 0 TO 3 DO
+	tmp[i] := msg.data[i+pos];
+END_FOR
+pt := ADR(tmp);
+output := pt^;]]></ST>
+    </Implementation>
+    <LineIds Name="ByteArrayToReal">
+      <LineId Id="34" Count="3" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

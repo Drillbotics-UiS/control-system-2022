@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="CAN_Send" Id="{4b8a44c6-690e-41b9-8f2f-64008e863b16}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION CAN_Send : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	NumberOfMessagesToSend : UINT := 9;
+	MessageToSend : ARRAY [0..9] OF CANQUEUE;
+	// msg
+
+	
+	k : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//System State, ID 100
+MessageToSend[0].cobId :=  SHL(100, 5) OR 8;
+DINTToByteArray(Process.State, 0, msg => MessageToSend[0].data);
+
+//WOB_1 and WOB_2, ID 110
+MessageToSend[1].cobId := SHL(110, 5) OR 8;
+REALToByteArray(Inputs.AI_Z1,Inputs.AI_Z2, msg => MessageToSend[1].data);
+
+//WOB_3 and WOB_AVG, ID 120
+MessageToSend[2].cobId :=  SHL(120, 5) OR 8;
+REALToByteArray(Inputs.AI_Z3, Inputs.AI_Z1+Inputs.AI_Z2+Inputs.AI_Z3, msg => MessageToSend[2].data);
+
+//Pressure and temperature (circulation sysstem), ID 130
+MessageToSend[3].cobId :=  SHL(130, 5) OR 8;
+RealToByteArray(Process.Pressure, Process.Temperature, msg => MessageToSend[3].data);
+
+//Interlocks, ID 140
+MessageToSend[4].cobId := SHL(140, 5) OR 8;
+DINTToByteArray(Process.InterlockAndLimit,0, msg => MessageToSend[4].data);
+
+//Pump set point, ID 150
+MessageToSend[5].cobId := SHL(150, 5) OR 8;
+REALToByteArray(Process.PumpSetPoint,Process.Height, msg => MessageToSend[5].data);
+
+//Top drive RPM and Torque, ID 160
+MessageToSend[6].cobId :=  SHL(160, 5) OR 8;
+RealToByteArray(Process.TopDriveRPM, Process.TopDriveTorque, msg => MessageToSend[6].data);
+
+//Set point top drive RPM and torque, ID 170
+MessageToSend[7].cobId := SHL(170, 5) OR 8;
+REALToByteArray(Process.TopDriveRPMSetPoint,Process.TopDriveTorqueSetPoint, msg => MessageToSend[7].data);
+
+//Signals last message in iteration, ID 199, should always be last in array.
+MessageToSend[8].cobId := SHL(199,5) OR 8;
+
+
+
+IF Outputs.TxQueue.TxCounter = Inputs.RxQueue.TxCounter THEN
+	FOR k:=0 TO NumberOfMessagesToSend DO
+		Outputs.TxQueue.TxMessages[k] := MessageToSend[k];
+	END_FOR
+	Outputs.TxQueue.NoOfTxMessages := NumberOfMessagesToSend;
+	Outputs.TxQueue.TxCounter := Outputs.TxQueue.TxCounter +1;
+END_IF
+k := 0;]]></ST>
+    </Implementation>
+    <LineIds Name="CAN_Send">
+      <LineId Id="8" Count="43" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

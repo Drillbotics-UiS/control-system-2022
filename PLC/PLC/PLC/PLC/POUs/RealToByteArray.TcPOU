@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="RealToByteArray" Id="{86ed179a-9893-435d-a918-2af64c9dfa18}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RealToByteArray
+VAR_OUTPUT
+	msg : ARRAY[0..7] OF USINT;
+END_VAR
+VAR_INPUT
+	value1 : REAL;
+	value2 : REAL;
+END_VAR
+VAR
+	pt1 : POINTER TO ARRAY[0..3] OF USINT;
+	pt2 : POINTER TO ARRAY[0..3] OF USINT;
+	i : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//converts two floating point numbers to a byte-array and returns the array.
+
+pt1 := ADR(value1);
+pt2 := ADR(value2);
+FOR i:=0 TO 3 DO
+	msg[i] := pt1^[i];
+	msg[i+4] := pt2^[i];
+END_FOR;]]></ST>
+    </Implementation>
+    <LineIds Name="RealToByteArray">
+      <LineId Id="21" Count="6" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
